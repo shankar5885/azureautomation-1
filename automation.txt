@@ -1,0 +1,44 @@
+$resourceGroupName = "RG01"
+$locationName = "Central US"
+Connect-AzureRmAccount
+
+Get-AzureRmResourceGroup -Name $resourceGroupName -ErrorVariable notPresent -ErrorAction SilentlyContinue
+if ($notPresent)
+{
+    # ResourceGroup doesn't exist
+    New-AzureRmResourceGroup -Name $resourceGroupName -Location $locationName
+}
+else
+{
+    # ResourceGroup exist
+}
+
+New-AzureRmResourceGroup -Name $resourceGroupName -Location $locationName
+$server = New-AzureRmSqlServer -ResourceGroupName $resourceGroup -Location $location -ServerName "rabickel-server01" -ServerVersion "12.0" -AssignIdentity
+$server.FullyQualifiedDomainName
+
+New-AzureRmResourceGroup -Name RG01 -Location "South Central US"
+Set-AzureRmResourceGroup -Name "RG01" -Tag @{Department="IT"}
+
+New-AzureRmSqlServer -ResourceGroupName $resourceGroup -Location $location -ServerName "rabickel-server01" -ServerVersion "12.0" -AssignIdentity
+
+[System.Reflection.Assembly]::LoadWithPartialName("system.web.security.membership")
+ [system.web.security.membership]::GeneratePassword(50,5)
+
+
+# namespace: System.Web.Security 
+# assembly: System.Web (in System.Web.dll) 
+# method: GeneratePassword(int length, int numberOfNonAlphanumericCharacters) 
+
+#Load "System.Web" assembly in PowerShell console 
+[Reflection.Assembly]::LoadWithPartialName("System.Web")
+
+#Calling GeneratePassword Method 
+$pwd = [System.Web.Security.Membership]::GeneratePassword(32,0)
+
+
+New-AzureRmKeyVault -Name 'Contoso-Vault2' -ResourceGroupName $resourceGroup -Location $location 
+
+$secretvalue = ConvertTo-SecureString $pwd -AsPlainText -Force
+$secret = Set-AzureKeyVaultSecret -VaultName 'ContosoKeyVault' -Name 'ExamplePassword' -SecretValue $secretvalue
+(Get-AzureKeyVaultSecret -vaultName "Contosokeyvault" -name "ExamplePassword").SecretValueText
