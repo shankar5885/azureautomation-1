@@ -15,5 +15,7 @@ if (!$vault.VaultName)
 $pwd = [System.Web.Security.Membership]::GeneratePassword(32,0)
 
 $secretvalue = ConvertTo-SecureString $pwd -AsPlainText -Force
-$secret = Set-AzureKeyVaultSecret -VaultName $keyVaultName -Name $resourceName -SecretValue $secretvalue
-(Get-AzureKeyVaultSecret -vaultName $keyVaultName -name $resourceName).SecretValueText
+Set-AzureKeyVaultSecret -VaultName $keyVaultName -Name $resourceName -SecretValue $secretvalue
+
+return $vault
+#(Get-AzureKeyVaultSecret -vaultName $keyVaultName -name $resourceName).SecretValueText
